@@ -1,0 +1,59 @@
+1.修改vmware的虚拟网络配置
+使用nat，设定vmnet8网卡的ip
+dhcp可BOOTPROTO以选择关闭
+2.修改主机名
+vi  /etc/sysconfig/network
+
+NETWORKING="yes"
+HOSTNAME ="hadoop01"
+
+2修改网卡ip设置
+BOOTPROTO=“static”
+HWADDR=“00:0C:29:59:A4:B2”
+IPADDR="192.168.137.101"
+GATEWAY="192.168.137.2"
+DNS="8.8.8.8"
+
+3.修改主机名和ip的映射关系
+vi /etc/hosts
+
+192.168.137.101   hadoop01
+
+4.关闭防火墙，设置防火墙开机不启动
+systemctl stop firewalld.service
+systemctl disable firewalld.service
+
+5.关闭NetworkManager
+systemctl stop NetworkManager.service
+systemctl disable NetworkManager.service
+
+6.重启网络
+systemctl restart network
+
+重启如果有效，去ping一下外网和网关
+然后在主机ping一下虚拟机
+如果ping通
+打开securecrt连接虚拟机，连接成功之后，打开securefx，上传hadoop安装包和jdk安装包
+
+关于securecrt乱码：
+打开选项---会话选项---外观---编码方式改为utf-8
+https://blog.csdn.net/liuhailiuhai12/article/details/53560146
+关于securefx本地窗口
+打开视图选项，勾选本地窗口 
+
+转到/home/soft下
+tar -zxvf jdk-8u231-linux-x64.tar.gz -C /home/app
+cd /home/app
+mv jdk1.8.XXX jdk1.8
+
+添加Java环境变量
+vi /etc/profile
+shift+g到文件最后，shift+a到文件最后一行末尾并打开输入
+export JAVA_HOME=/home/app/jdk1.8
+export PATH=$PATH:$JAVA_HOME/bin
+:wq保存并退出
+source /etc/profile
+查看Java配置是否成功
+java -version
+jps
+
